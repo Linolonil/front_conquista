@@ -5,11 +5,10 @@ import axios from "axios";
 
 function CategoryList({ title, menuItems, setMenuItems, list }) {
   const [open, setOpen] = useState(false);
-  
-  const visibilidadeItem = process.env.NEXT_PUBLIC_PUT_ITEM_VISIBILIDADE;
-  
-  const deleteItem = process.env.NEXT_PUBLIC_DELETE_ITEM;
 
+  const visibilidadeItem = process.env.NEXT_PUBLIC_PUT_ITEM_VISIBILIDADE;
+
+  const deleteItem = process.env.NEXT_PUBLIC_DELETE_ITEM;
 
   const filterItemsByCategory = (category) => {
     return menuItems.filter((item) => item.categoryId === category);
@@ -57,7 +56,7 @@ function CategoryList({ title, menuItems, setMenuItems, list }) {
   };
 
   return (
-    <div className="col-md-4">
+    <div className="col-md-6">
       <div className="border rounded p-3 shadow m-2">
         <h3 onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}>
           {title}
@@ -89,16 +88,16 @@ function CategoryList({ title, menuItems, setMenuItems, list }) {
                 {item.isVisible ? " (Visível)" : " (Oculto)"}
                 <div className="d-flex justify-content-around">
                   <button
-                    className="btn btn-secondary btn-sm ml-2 m-1 "
-                    onClick={() => toggleVisibility(item.id, item.isVisible)}
-                  >
-                    Alternar Visibilidade
-                  </button>
-                  <button
                     className="btn btn-danger btn-sm ml-2 m-1"
                     onClick={() => removeItem(item.id)}
                   >
                     Excluir
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-sm ml-2 m-1 "
+                    onClick={() => toggleVisibility(item.id, item.isVisible)}
+                  >
+                    Alternar Visibilidade
                   </button>
                 </div>
               </li>

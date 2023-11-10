@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-// import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import axios from "axios";
 
 function SearchItem({ menuItems, setMenuItems }) {
   const [searchText, setSearchText] = useState("");
   const visibilidadeItem = process.env.NEXT_PUBLIC_PUT_ITEM_VISIBILIDADE;
-  
+
   const deleteItem = process.env.NEXT_PUBLIC_DELETE_ITEM;
 
   const removeItem = (itemId) => {
@@ -17,11 +17,11 @@ function SearchItem({ menuItems, setMenuItems }) {
             (item) => item.id !== itemId
           );
           setMenuItems(updatedItemList);
-          // toast.success('Item excluído com sucesso');
+          toast.success("Item excluído com sucesso");
         }
       })
       .catch((error) => {
-        // toast.error('Erro ao excluir o item');
+        toast.error("Erro ao excluir o item");
         console.error("Erro ao excluir o item:", error);
       });
   };
@@ -93,16 +93,16 @@ function SearchItem({ menuItems, setMenuItems }) {
               {item.isVisible ? " (Visível)" : " (Oculto)"}
               <div className="d-flex justify-content-around">
                 <button
-                  className="btn btn-secondary btn-sm ml-2 m-1 "
-                  onClick={() => toggleVisibility(item.id, item.isVisible)}
-                >
-                  Alternar Visibilidade
-                </button>
-                <button
                   className="btn btn-danger btn-sm ml-2 m-1"
                   onClick={() => removeItem(item.id)}
                 >
                   Excluir
+                </button>
+                <button
+                  className="btn btn-secondary btn-sm ml-2 m-1 "
+                  onClick={() => toggleVisibility(item.id, item.isVisible)}
+                >
+                  Alternar Visibilidade
                 </button>
               </div>
             </li>

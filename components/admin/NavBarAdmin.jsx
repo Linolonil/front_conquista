@@ -23,29 +23,29 @@ const NavBar = ({ message }) => {
     router.push("/login");
   };
 
+  const href = {
+    url: "/admin",
+    name: "Admin",
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="d-flex justify-content-center">
-            <Link href="/admin" passHref>
-              <Image
-                src="/logo-min.png"
-                alt="Imagem Responsiva"
-                width={150}
-                height={150}
-              />
-            </Link>
-          </div>
+    <nav className="navbar navbar-expand-lg ">
+      <div className="container d-flex flex-column align-items-center">
+        <Link href={href.url}>
+          <Image
+            src="/logo-min.png"
+            alt="Imagem Responsiva"
+            width={150}
+            height={150}
+          />
+        </Link>
 
-          <p className="navbar-text alert alert-primary mt-4">
-            {getWelcomeMessage(message)}
-          </p>
-
-          <button className="btn btn-danger" onClick={handleLogout}>
-            Encerrar Sessão
-          </button>
-        </div>
+        <p className="navbar-text alert alert-primary mt-4 mx-3 text-center fs-4">
+          {getWelcomeMessage(message)}
+        </p>
+        <button className="btn btn-danger" onClick={handleLogout}>
+          Encerrar Sessão
+        </button>
       </div>
     </nav>
   );

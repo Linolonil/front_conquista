@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-//
-import {ToastContainer}  from "react-toastify";
-
+import { ToastContainer } from "react-toastify";
 import axios from "axios";
-import NavBar from "../../components/admin/NavBarAdmin.jsx"; // ou o caminho correto para o componente NavBarAdmin
-import AddNewItemForm from "../../components/admin/AddNewItemForm.jsx"; // ou o caminho correto para o componente AddNewItemForm
-import CategoryList from "../../components/admin/CategoryList.jsx"; // ou o caminho correto para o componente CategoryList
-import SearchItem from "../../components/admin/SearchItem.jsx"; // ou o caminho correto para o componente SearchItem
+import NavBar from "../../components/admin/NavBarAdmin.jsx";
+import AddNewItemForm from "../../components/admin/AddNewItemForm.jsx";
+import CategoryList from "../../components/admin/CategoryList.jsx";
+import SearchItem from "../../components/admin/SearchItem.jsx";
+import Footer from "../../components/footer/Footer.jsx";
+import { Container } from "react-bootstrap";
 
 function AdminPanel() {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [menuItems, setMenuItems] = useState([]);
 
-  //rotas API
+  // rotas API
   const getItem = process.env.NEXT_PUBLIC_GET_ITEM_ADMIN;
   const getRota = process.env.NEXT_PUBLIC_GET_ROTA_PROTEGIDA;
 
@@ -58,17 +58,26 @@ function AdminPanel() {
   }, []);
 
   return (
-    <div className="container-fluid">
+    <Container>
       <NavBar message={message} />
       <hr className="my-5" />
-      <h2 className="mt-5 text-center display-4 fw-bold ">Cardápio</h2>
+
+      <h2 className="mt-5 text-center display-4 fw-bold">Adicionar item</h2>
+
       <AddNewItemForm
         message={message}
         menuItems={menuItems}
         setMenuItems={setMenuItems}
       />
+            <hr className="my-5" />
+
+            <h2 className="mt-5 text-center display-4 fw-bold">Pesquisar Item</h2>
+
       <SearchItem menuItems={menuItems} setMenuItems={setMenuItems} />
 
+      <hr className="my-5" />
+
+      <h2 className="mt-5 text-center display-4 fw-bold">Cardápio</h2>
       <div className="row">
         <CategoryList
           title={"Lanches"}
@@ -95,9 +104,11 @@ function AdminPanel() {
           list={4}
         />
       </div>
+      <hr className="my-5" />
 
+      <Footer />
       <ToastContainer />
-    </div>
+    </Container>
   );
 }
 
