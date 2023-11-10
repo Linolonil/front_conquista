@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.bg {
+  background-image: url("../../assets/images.jfif");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.custom-rounded-button {
+  width: 30px; /* Defina a largura desejada */
+  height: 30px; /* Defina a altura desejada */
+  border-radius: 50%; /* Para criar uma bolinha perfeita */
+  text-align: center;
+}
+
+.item-unavailable {
+  opacity: 0.3; /* Tornar o item mais escuro */
+  pointer-events: none; /* Desativar eventos de clique */
+  cursor: not-allowed; /* Cursor de não permitido */
+}
