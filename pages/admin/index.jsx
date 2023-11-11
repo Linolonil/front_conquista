@@ -9,7 +9,7 @@ import SearchItem from "../../components/admin/SearchItem.jsx";
 import Footer from "../../components/footer/Footer.jsx";
 import { Container } from "react-bootstrap";
 
-function AdminPanel() {
+export default function AdminPanel() {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [menuItems, setMenuItems] = useState([]);
@@ -69,9 +69,9 @@ function AdminPanel() {
         menuItems={menuItems}
         setMenuItems={setMenuItems}
       />
-            <hr className="my-5" />
+      <hr className="my-5" />
 
-            <h2 className="mt-5 text-center display-4 fw-bold">Pesquisar Item</h2>
+      <h2 className="mt-5 text-center display-4 fw-bold">Pesquisar Item</h2>
 
       <SearchItem menuItems={menuItems} setMenuItems={setMenuItems} />
 
@@ -111,5 +111,3 @@ function AdminPanel() {
     </Container>
   );
 }
-
-export default AdminPanel;

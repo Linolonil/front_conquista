@@ -5,13 +5,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 
-const Login = () => {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  
+
   useEffect(() => {
     // Cria um id específico para a notificação
     const toastId = "greeting-notification";
@@ -20,7 +20,7 @@ const Login = () => {
     if (!toast.isActive(toastId)) {
       const currentHour = new Date().getHours();
       let greetingMessage = "";
-      let iconActual = ""
+      let iconActual = "";
 
       if (currentHour >= 5 && currentHour < 12) {
         greetingMessage = "Bom dia";
@@ -36,7 +36,7 @@ const Login = () => {
       // Exibe a notificação apenas se não estiver ativa
       toast.success(greetingMessage, {
         toastId,
-        icon: `${iconActual}`
+        icon: `${iconActual}`,
       });
     }
   }, []);
@@ -187,6 +187,4 @@ const Login = () => {
       <ToastContainer />
     </div>
   );
-};
-
-export default Login;
+}

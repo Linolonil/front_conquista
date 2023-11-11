@@ -10,7 +10,7 @@ import ItemMenu from "../components/menu/ItemMenu.jsx";
 import styles from "../styles/menu.module.css";
 import "../styles/menu.module.css"; // Adicione essa linha
 
-function MenuCardapio() {
+export default function MenuCardapio() {
   // Estados do componente
   const [showModal, setShowModal] = useState(false);
   const [menuData, setMenuData] = useState([]);
@@ -85,4 +85,3 @@ function MenuCardapio() {
   );
 }
 
-export default MenuCardapio;

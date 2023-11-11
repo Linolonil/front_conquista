@@ -1,0 +1,15 @@
+/* Reset de estilos para normalizar o CSS em todos os navegadores */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Adicione seus estilos globais aqui */
+
+body {
+  font-family: "Arial", sans-serif;
+  line-height: 1.6;
+  background-color: #f8f8f8;
+}
+

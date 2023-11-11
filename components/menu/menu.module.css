@@ -6,16 +6,13 @@
 }
 
 .custom-rounded-button {
-  width: 30px; /* Defina a largura desejada */
-  height: 30px; /* Defina a altura desejada */
-  border-radius: 50%; /* Para criar uma bolinha perfeita */
-  text-align: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 }
-
-.item-unavailable {
-  opacity: 0.3; /* Tornar o item mais escuro */
-  pointer-events: none; /* Desativar eventos de clique */
-  cursor: not-allowed; /* Cursor de não permitido */
+.max-lines {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
-
-
