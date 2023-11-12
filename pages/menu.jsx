@@ -44,7 +44,7 @@ export default function MenuCardapio() {
   return (
     <div>
       {/* Barra de navegação */}
-      <nav className={`text-center ${styles.navbar}`}>
+      <nav className={`text-center bg-dark ${styles.navbar}`}>
         <div className="text-center">
           <Image
             src="/logo-min.png"
@@ -54,8 +54,9 @@ export default function MenuCardapio() {
             height={50}
           />
         </div>
-        <h6>Cardápio Conquista</h6>
-        {/* Botão do carrinho */}
+        <div className="menu-header">
+      <h6 className="text-light fs-2 custom-font">Cardápio Conquista</h6>
+    </div>        {/* Botão do carrinho */}
         <Button
           className={`bg-danger border-danger shadow ${styles.cartButton}`}
           onClick={openModal}
@@ -84,4 +85,3 @@ export default function MenuCardapio() {
     </div>
   );
 }
-

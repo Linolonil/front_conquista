@@ -2,6 +2,8 @@ import { Button, Modal, Container, Form } from "react-bootstrap";
 import { useState } from "react";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ModalCart({
   cart,
@@ -12,9 +14,9 @@ function ModalCart({
   setShowModal,
 }) {
   const [formaPagamento, setFormaPagamento] = useState("");
-  const [entrega, setEntrega] = useState("");
+  const [entrega, setEntrega] = useState(false);
   const [endereco, setEndereco] = useState("");
-  const [retirada, setRetirada] = useState("");
+  const [retirada, setRetirada] = useState(false);
   const [nota, setNota] = useState("");
   const closeModal = () => {
     setShowModal(false);
@@ -69,26 +71,51 @@ function ModalCart({
     setCartCount(0);
   };
 
-  const todasPerguntasRespondidas = () => {
-    // Verifica se todas as perguntas foram respondidas
-    return formaPagamento && (entrega || retirada);
-  };
-
   const finalizarPedido = async () => {
-    if (!todasPerguntasRespondidas() || cartCount === 0) {
-      alert(
-        "Por favor, responda todas as perguntas e adicione itens ao carrinho antes de finalizar o pedido."
-      );
+    // Validação específica para quantidade de itens no carrinho
+    if (cartCount === 0) {
+      toast.info("Adicione pelo menos 1 item ao carrinho antes de finalizar.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
       return;
     }
 
+    // Validação específica para forma de pagamento
+    if (!formaPagamento) {
+      toast.info("Escolha uma forma de pagamento.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    // Validação para opção de entrega ou retirada
+    if (!(entrega || retirada)) {
+      toast.info("Selecione a opção de entrega ou retirada.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    // Validação específica para entrega com endereço
+    if (entrega && (!endereco || endereco.trim() === "")) {
+      toast.info("Preencha o campo de endereço para entrega.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+      return;
+    }
+
+    // Restante do código para finalizar o pedido
     const respostas = {
       items: [], // Preencha com os itens do pedido
-      formaPagamento: "dinheiro", // Preencha com a forma de pagamento escolhida
-      entrega: true, // Preencha com a escolha de entrega
-      retirada: false, // Preencha com a escolha de retirada
-      nota: "Alguma observação", // Preencha com a nota do pedido
-      enderecoEntrega: "Endereço de entrega", // Preencha com o endereço de entrega, se aplicável
+      formaPagamento, // Preencha com a forma de pagamento escolhida
+      entrega, // Preencha com a escolha de entrega
+      retirada, // Preencha com a escolha de retirada
+      nota: nota || "N/A", // Preencha com a nota do pedido
+      enderecoEntrega: endereco || "N/A", // Preencha com o endereço de entrega, se aplicável
     };
 
     try {
@@ -117,6 +144,11 @@ function ModalCart({
       // Redirecione o cliente para o WhatsApp
       window.open(linkWhatsApp, "_blank");
 
+      // Salve o endereço no localStorage apenas se a opção de entrega estiver marcada
+      if (entrega) {
+        localStorage.setItem("endereco", endereco);
+      }
+
       // Limpe os campos e o carrinho após o pedido ser finalizado
       setFormaPagamento("");
       setEntrega(false);
@@ -132,6 +164,7 @@ function ModalCart({
       alert("Erro ao finalizar o pedido. Por favor, tente novamente.");
     }
   };
+
   return (
     <Modal show={showModal} onHide={closeModal} animation={false}>
       <Modal.Header closeButton>
@@ -142,22 +175,49 @@ function ModalCart({
           <ul className="list-group">
             {cart.map((item) => (
               <li key={item.id} className="list-group-item">
-                <div className="d-flex justify-content-between align-items-center">
-                  <span>{item.name}</span>
-                  <span>R${item.price.toFixed(2)}</span>
-                  <div className="quantity-controls">
+                <div className="row align-items-center">
+                  <div className="col-md-6 text-center">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span
+                        style={{
+                          fontFamily: "Roboto, sans-serif",
+                          fontSize: "16px",
+                          marginRight: "10px",
+                        }}
+                      >
+                        {item.name}
+                      </span>
+                      <span className="d-block">
+                        R$<strong>{item.price.toFixed(2)}</strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="col-md-3 quantity-controls text-center mt-1 d-flex align-items-center justify-content-center">
                     <Button
                       variant="secondary"
                       onClick={() => decrementQuantity(item)}
                       className="p-1 custom-rounded-button"
+                      style={{
+                        width: "2rem",
+                        marginRight: "10px",
+                        borderRadius: "50%",
+                      }}
                     >
                       <FontAwesomeIcon icon={faMinus} />
                     </Button>
-                    <span className="mx-2">{item.quantity}</span>
+                    <span className="mx-2 bg-light p-2 rounded border border-danger">
+                      <strong>{item.quantity}</strong>
+                    </span>
                     <Button
                       variant="secondary"
                       onClick={() => incrementQuantity(item)}
                       className="p-1 custom-rounded-button"
+                      style={{
+                        width: "2rem",
+                        marginLeft: "10px",
+                        borderRadius: "50%",
+                      }}
                     >
                       <FontAwesomeIcon icon={faPlus} />
                     </Button>
@@ -166,78 +226,106 @@ function ModalCart({
               </li>
             ))}
           </ul>
-          <div className="total-carrinho mt-3">
-            <strong>Total: R${calcularTotal().toFixed(2)}</strong>
+
+          <div className="total-carrinho mt-3 d-flex justify-content-end">
+            <strong className="fs-5">
+              Total: R${calcularTotal().toFixed(2)}
+            </strong>
           </div>
 
           {/* Formulário para as perguntas adicionais */}
           <Form className="mt-3">
             <Form.Group controlId="formaPagamento">
-              <Form.Label>Forma de Pagamento</Form.Label>
+              <Form.Label>
+                Forma de Pagamento<strong>*</strong>
+              </Form.Label>
               <Form.Control
                 as="select"
                 value={formaPagamento}
                 onChange={(e) => setFormaPagamento(e.target.value)}
+                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
               >
-                <option value="">Escolha uma forma de pagamento</option>
+                <option value=""></option>
                 <option value="dinheiro">Dinheiro</option>
-                <option value="cartao">Cartão de Crédito</option>
+                <option value="cartao">Cartão Débito/Crédito</option>
                 <option value="pix">Pix</option>
               </Form.Control>
             </Form.Group>
+            <div className="d-flex justify-content-between mt-3">
+              <Form.Group controlId="entrega">
+                <Form.Check
+                  type="checkbox"
+                  label="Entrega"
+                  checked={entrega}
+                  onChange={() => {
+                    setEntrega(!entrega);
+                    setRetirada(false);
+                    // Se a opção de entrega estiver marcada, salve o endereço no localStorage
+                    if (!entrega) {
+                      const enderecoSalvo = localStorage.getItem("endereco");
+                      if (enderecoSalvo) {
+                        // Use a função correta para salvar no localStorage
+                        setEndereco(enderecoSalvo);
+                      }
+                    }
+                  }}
+                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+                />
+              </Form.Group>
 
-            <Form.Group controlId="entrega">
-              <Form.Check
-                type="checkbox"
-                label="Entrega"
-                checked={entrega}
-                onChange={() => {
-                  setEntrega(!entrega);
-                  setRetirada(false);
-                }}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="retirada">
-              <Form.Check
-                type="checkbox"
-                label="Retirada no Local"
-                checked={retirada}
-                onChange={() => {
-                  setRetirada(!retirada);
-                  setEntrega(false);
-                }}
-              />
-            </Form.Group>
-
+              <Form.Group controlId="retirada">
+                <Form.Check
+                  type="checkbox"
+                  label="Retirada no restaurante"
+                  checked={retirada}
+                  onChange={() => {
+                    setRetirada(!retirada);
+                    setEntrega(false);
+                  }}
+                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+                />
+              </Form.Group>
+            </div>
             {entrega && (
-              <Form.Group controlId="endereco">
-                <Form.Label>Endereço de Entrega</Form.Label>
+              <Form.Group controlId="endereco" className="mt-3">
+                <Form.Label>
+                  Endereço de Entrega<strong>*</strong>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
+                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+                  required
                 />
+                <div className="text-muted" style={{ fontSize: "12px" }}>
+                  Entregamos apenas para o bairro Ouro Verde e redondezas.
+                </div>
               </Form.Group>
             )}
-
-            <Form.Group controlId="nota">
-              <Form.Label>Observações</Form.Label>
+            <Form.Group controlId="nota" className="mt-3">
+              <Form.Label>Observações do pedido (opcional)</Form.Label>
               <Form.Control
-                as="textarea"
+                as="input"
                 rows={3}
                 value={nota}
                 onChange={(e) => setNota(e.target.value)}
+                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
               />
             </Form.Group>
           </Form>
         </Container>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={finalizarPedido}>
+        <Button
+          variant="primary"
+          onClick={finalizarPedido}
+          style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+        >
           Finalizar Pedido
         </Button>
       </Modal.Footer>
+      <ToastContainer />
     </Modal>
   );
 }
