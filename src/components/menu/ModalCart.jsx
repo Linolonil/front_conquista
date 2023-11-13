@@ -121,17 +121,16 @@ function ModalCart({
     try {
       // Construa a mensagem para enviar para o WhatsApp
       const mensagem = `Novo pedido!\n\nDetalhes do pedido:\n${cart
-        .map(
-          (item) =>
-            `- ${item.quantity}x ${item.name} - R$${(
-              item.price * item.quantity
-            ).toFixed(2)}`
-        )
-        .join("\n")}\n\nForma de pagamento: ${formaPagamento}\nEntrega: ${
+        .map((item) =>`- ${item.quantity}x ${item.name} - R$${(item.price * item.quantity).toFixed(2)}`)
+        .join("\n")}\n\nForma de pagamento: ${formaPagamento}
+        \nTotal: ${calcularTotal().toFixed(2)}
+        \nEntrega: ${
         entrega ? "Sim" : "Não"
-      }\nRetirada: ${retirada ? "Sim" : "Não"}\nObservações: ${
+      }
+      \nEndereço de entrega: ${endereco || "N/A"}`;
+      \nRetirada: ${retirada ? "Sim" : "Não"}\nObservações: ${
         nota || "N/A"
-      }\nEndereço de entrega: ${endereco || "N/A"}`;
+      }
 
       // Substitua 'SEU-NUMERO-DE-TELEFONE' pelo número de telefone para o qual você deseja receber a mensagem
       const numeroWhatsApp = process.env.NEXT_PUBLIC_NUMERO_WPP;

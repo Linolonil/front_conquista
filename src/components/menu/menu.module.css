@@ -1,10 +1,9 @@
 .bg {
-  background-image: url("../../public/assets/Background3-min.jpg");
+  background-image: url("../../../public/assets/Background3-min.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 3px solid  red;
-
+  border: 3px solid red;
 }
 
 .custom-rounded-button {
