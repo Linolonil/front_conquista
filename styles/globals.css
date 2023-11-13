@@ -1,15 +1,9 @@
-/* Reset de estilos para normalizar o CSS em todos os navegadores */
-* {
-  box-sizing: border-box;
+/* styles/globals.css */
+body {
   margin: 0;
   padding: 0;
-}
-
-/* Adicione seus estilos globais aqui */
-
-body {
+  box-sizing: border-box;
+  background-color: #cf0d0d; /* Sua cor de fundo desejada, por exemplo, preto (#000) */
   font-family: "Arial", sans-serif;
   line-height: 1.6;
-  background-color: #f8f8f8;
 }
-

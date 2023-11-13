@@ -1,6 +1,7 @@
 // pages/_app.js
 
 import { createContext, useState } from "react";
+import "../styles/globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export const AppContext = createContext();

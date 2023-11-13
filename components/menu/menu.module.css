@@ -7,10 +7,6 @@
 
 }
 
-.bg > div > div > p{
-  font-style: italic;
-}
-
 .custom-rounded-button {
   width: 30px;
   height: 30px;
@@ -21,8 +17,4 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-}
-
-.custom-font {
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif; /* Substitua 'Sua Fonte' pelo nome da fonte */
 }
