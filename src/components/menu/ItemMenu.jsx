@@ -195,10 +195,7 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
                       </p>
                     </div>
                     <div className="d-flex justify-content-between mt-4">
-                      <p
-                        className="card-text fs-5 fw-bold"
-                        style={{ color: "#fff" }}
-                      >
+                      <p className="card-text fs-5 fw-bold text-light lead">
                         R$ {item.price.toFixed(2)}
                       </p>
                       <button

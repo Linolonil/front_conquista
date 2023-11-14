@@ -1,4 +1,5 @@
 // MenuCardapio.jsx
+import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NavItem from "../src/components/menu/NavMenu.jsx";
@@ -31,6 +32,9 @@ export default function MenuCardapio() {
   // Renderização do componente
   return (
     <div className="container-fluid bg-dark">
+      <Head>
+        <title>Menu Conquista</title>
+      </Head>
       <div className="row">
         {/* Navigation Menu */}
         <div className="col-md-12">

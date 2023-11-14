@@ -175,16 +175,25 @@ function ModalCart({
   return (
     <Modal show={showModal} onHide={closeModal} animation={true}>
       <Modal.Header className="bg-dark text-light" closeButton>
-        <Modal.Title>Carrinho</Modal.Title>
+        <Modal.Title>Carrinho de pedidos </Modal.Title>
       </Modal.Header>
       <Modal.Body className="bg-dark text-light">
         <Container>
           <ul className="list-group">
             {cart.map((item) => (
-              <li key={item.id} className="list-group-item"  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }} >
+              <li
+                key={item.id}
+                className="list-group-item"
+                style={{
+                  fontFamily: "Roboto, sans-serif",
+                  fontSize: "16px",
+                  backgroundColor: "#212529",
+                  color: "#fff",
+                }}
+              >
                 <div className="row align-items-center">
-                  <div className="col-md-4 text-center" >
-                    <div className="d-flex justify-content-between align-items-center" >
+                  <div className="col-md-8 text-center">
+                    <div className="d-flex justify-content-between align-items-center">
                       <span
                         style={{
                           fontFamily: "Roboto, sans-serif",
@@ -214,7 +223,7 @@ function ModalCart({
                     >
                       <FontAwesomeIcon icon={faMinus} />
                     </Button>
-                    <span className="mx-2 bg-light p-2 rounded border border-danger bg-dark ">
+                    <span className="mx-2 bg-light p-2 px-3 rounded border border-danger bg-dark ">
                       <strong>{item.quantity}</strong>
                     </span>
                     <Button
@@ -252,7 +261,13 @@ function ModalCart({
                 as="select"
                 value={formaPagamento}
                 onChange={(e) => setFormaPagamento(e.target.value)}
-                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }}              >
+                style={{
+                  fontFamily: "Roboto, sans-serif",
+                  fontSize: "16px",
+                  backgroundColor: "#212529",
+                  color: "#fff",
+                }}
+              >
                 <option value=""></option>
                 <option value="dinheiro">Dinheiro</option>
                 <option value="cartao">Cartão Débito/Crédito</option>
@@ -260,58 +275,71 @@ function ModalCart({
               </Form.Control>
             </Form.Group>
 
-            <div className="d-flex justify-content-between mt-3">
-              <Form.Group controlId="entrega">
-                <Form.Check
-                  type="checkbox"
-                  label="Entrega"
-                  checked={entrega}
-                  onChange={() => {
-                    setEntrega(!entrega);
-                    setRetirada(false);
-                    setMesa(false);
-                    // Se a opção de entrega estiver marcada, salve o endereço no localStorage
-                    if (!entrega) {
-                      const enderecoSalvo = localStorage.getItem("endereco");
-                      if (enderecoSalvo) {
-                        // Use a função correta para salvar no localStorage
-                        setEndereco(enderecoSalvo);
+            <Form.Group controlId="formaEntrega" className="mt-3">
+              <Form.Label>
+                O pedido é para?<strong>*</strong>
+              </Form.Label>
+              <div className="d-flex p-2  justify-content-between">
+                <Form.Group controlId="entrega">
+                  <Form.Check
+                    type="checkbox"
+                    label="Entrega"
+                    checked={entrega}
+                    onChange={() => {
+                      setEntrega(!entrega);
+                      setRetirada(false);
+                      setMesa(false);
+                      // Se a opção de entrega estiver marcada, salve o endereço no localStorage
+                      if (!entrega) {
+                        const enderecoSalvo = localStorage.getItem("endereco");
+                        if (enderecoSalvo) {
+                          // Use a função correta para salvar no localStorage
+                          setEndereco(enderecoSalvo);
+                        }
                       }
-                    }
-                  }}
-                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
-                />
-              </Form.Group>
+                    }}
+                    style={{
+                      fontFamily: "Roboto, sans-serif",
+                      fontSize: "16px",
+                    }}
+                  />
+                </Form.Group>
 
-              <Form.Group controlId="retirada">
-                
-                <Form.Check
-                  type="checkbox"
-                  label="Retirada"
-                  checked={retirada}
-                  onChange={() => {
-                    setRetirada(!retirada);
-                    setEntrega(false);
-                    setMesa(false);
-                  }}
-                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
-                />
-              </Form.Group>
+                <Form.Group controlId="retirada">
+                  <Form.Check
+                    type="checkbox"
+                    label="Retirada"
+                    checked={retirada}
+                    onChange={() => {
+                      setRetirada(!retirada);
+                      setEntrega(false);
+                      setMesa(false);
+                    }}
+                    style={{
+                      fontFamily: "Roboto, sans-serif",
+                      fontSize: "16px",
+                    }}
+                  />
+                </Form.Group>
 
-              <Form.Group controlId="pedirMesa">
-                <Form.Check
-                  type="checkbox"
-                  label="Pedir para mesa"
-                  checked={mesa}
-                  onChange={() => {
-                    setMesa(!mesa);
-                    setEntrega(false);
-                    setRetirada(false);
-                  }}
-                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
-                />
-              </Form.Group>
-            </div>
+                <Form.Group controlId="pedirMesa">
+                  <Form.Check
+                    type="checkbox"
+                    label="Mesa"
+                    checked={mesa}
+                    onChange={() => {
+                      setMesa(!mesa);
+                      setEntrega(false);
+                      setRetirada(false);
+                    }}
+                    style={{
+                      fontFamily: "Roboto, sans-serif",
+                      fontSize: "16px",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+            </Form.Group>
 
             {entrega && (
               <Form.Group controlId="endereco" className="mt-3">
@@ -322,7 +350,12 @@ function ModalCart({
                   type="text"
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
-                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }}   
+                  style={{
+                    fontFamily: "Roboto, sans-serif",
+                    fontSize: "16px",
+                    backgroundColor: "#212529",
+                    color: "#fff",
+                  }}
                   required
                 />
                 <div className="text-muted" style={{ fontSize: "12px" }}>
@@ -334,12 +367,16 @@ function ModalCart({
             <Form.Group controlId="nota" className="mt-3">
               <Form.Label>Observações do pedido (opcional)</Form.Label>
               <Form.Control
-              
                 as="input"
                 rows={3}
                 value={nota}
                 onChange={(e) => setNota(e.target.value)}
-                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }}
+                style={{
+                  fontFamily: "Roboto, sans-serif",
+                  fontSize: "16px",
+                  backgroundColor: "#212529",
+                  color: "#fff",
+                }}
               />
             </Form.Group>
           </Form>
