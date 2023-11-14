@@ -7,17 +7,35 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./menu.module.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Image from "next/image";
 
-function ItemMenu({
-  loading,
-  menuData,
-  setCart,
-  setCartCount,
-  cart,
-  cartCount,
-}) {
+const formatTime = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
+};
+
+function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
   const [selectedCategory, setSelectedCategory] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(60); // Tempo inicial em segundos
+  const [progress, setProgress] = useState(100);
+
   const categorySliderRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (timeLeft > 0) {
+        setTimeLeft((prevTime) => prevTime - 1);
+        setProgress((prevProgress) => prevProgress - 100 / 60); // ajuste para o tempo desejado
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   useEffect(() => {
     if (menuData?.menu?.length > 0) {
@@ -27,7 +45,21 @@ function ItemMenu({
 
   if (!menuData || !menuData.menu || !Array.isArray(menuData.menu)) {
     return (
-      <div className="text-center text-light">O menu está carregando ... </div>
+      <div className={styles.centerImage}>
+        <Image
+          src="/logo-min.png"
+          className={`${styles.logo} img-fluid`}
+          alt="Logo"
+          width={300}
+          height={300}
+        />
+        <div className={`${styles.timer} text-light text-center`}>
+          {timeLeft > 0
+            ? `Tempo Restante: ${formatTime(timeLeft)}`
+            : "Desculpe a demora. Por favor, atualize a página para visualizar o menu. 😁"}
+        </div>
+        <progress value={progress} max="100" />
+      </div>
     );
   }
 
@@ -117,11 +149,7 @@ function ItemMenu({
   return (
     <div className="container">
       <div className="row mt-0 navbar p-4 sticky-top bg-dark">
-        <Slider
-          {...categorySettings}
-          ref={categorySliderRef}
-          className="p-1"
-          >
+        <Slider {...categorySettings} ref={categorySliderRef} className="p-1">
           {Object.keys(itemsByCategory).map((categoryId) => (
             <button
               key={categoryId}
@@ -139,59 +167,61 @@ function ItemMenu({
       </div>
 
       {itemsByCategory[selectedCategory]?.length > 0 ? (
-  <div className="row mx-0 mt-3">
-    {itemsByCategory[selectedCategory]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((item) => (
-        <div key={item.id} className="col-md-4 mb-0">
-          <div
-            className={`card ${
-              item.isVisible ? "card-available" : "card-unavailable"
-            } ${styles.bg}`}
-            style={{
-              opacity: item.isVisible ? 1 : 0.6,
-              border: item.isVisible ? "2px solid red" : "none",
-            }}
-          >
-            <div className="card-body mx-1">
-              <h5 className="card-title fs-5 fw-bold text-warning">
-                {item.name}
-              </h5>
-              <div style={{ color: "#979797" }}>
-                <p
-                  className={`card-text ${
-                    item.isVisible ? "btn-available" : "btn-unavailable"
-                  }`}
+        <div className="row mx-0 mt-3">
+          {itemsByCategory[selectedCategory]
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((item) => (
+              <div key={item.id} className="col-md-4 mb-0">
+                <div
+                  className={`card ${
+                    item.isVisible ? "card-available" : "card-unavailable"
+                  } ${styles.bg}`}
+                  style={{
+                    opacity: item.isVisible ? 1 : 0.6,
+                    border: item.isVisible ? "2px solid red" : "none",
+                  }}
                 >
-                  {item.description}
-                </p>
+                  <div className="card-body mx-1">
+                    <h5 className="card-title fs-5 fw-bold text-warning">
+                      {item.name}
+                    </h5>
+                    <div style={{ color: "#979797" }}>
+                      <p
+                        className={`card-text ${
+                          item.isVisible ? "btn-available" : "btn-unavailable"
+                        }`}
+                      >
+                        {item.description}
+                      </p>
+                    </div>
+                    <div className="d-flex justify-content-between mt-4">
+                      <p
+                        className="card-text fs-5 fw-bold"
+                        style={{ color: "#fff" }}
+                      >
+                        R$ {item.price.toFixed(2)}
+                      </p>
+                      <button
+                        className={`btn btn-danger ${
+                          item.isVisible ? "btn-available" : "btn-unavailable"
+                        }`}
+                        onClick={() => addToCart(item)}
+                        disabled={!item.isVisible}
+                      >
+                        <FontAwesomeIcon icon={faPlus} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <hr />
               </div>
-              <div className="d-flex justify-content-between mt-4">
-                <p className="card-text fs-5 fw-bold" style={{ color: "#fff" }}>
-                  R$ {item.price.toFixed(2)}
-                </p>
-                <button
-                  className={`btn btn-danger ${
-                    item.isVisible ? "btn-available" : "btn-unavailable"
-                  }`}
-                  onClick={() => addToCart(item)}
-                  disabled={!item.isVisible}
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </button>
-              </div>
-            </div>
-          </div>
-          <hr />
+            ))}
         </div>
-      ))}
-  </div>
-) : (
-  <div className="text-center mt-3">
-    <p>Itens Indisponíveis no Momento</p>
-  </div>
-)}
-
+      ) : (
+        <div className="text-center mt-3">
+          <p>Itens Indisponíveis no Momento</p>
+        </div>
+      )}
 
       <ToastContainer />
     </div>
