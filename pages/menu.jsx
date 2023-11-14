@@ -36,11 +36,11 @@ export default function MenuCardapio() {
         <div className="col-md-12">
           <NavItem {...{ cart, cartCount, setCart, setCartCount }} />
         </div>
-
         {/* Item Menu */}
         <div className="col-md-12 ">
           <ItemMenu {...{ menuData, setCart, setCartCount, cart, cartCount }} />
         </div>
+        {/* Footer Menu */}
         <div className="col-md-12 ">
           <Footer bg="bg-dark" text="text-light" />
         </div>
