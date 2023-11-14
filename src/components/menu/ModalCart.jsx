@@ -15,6 +15,7 @@ function ModalCart({
 }) {
   const [formaPagamento, setFormaPagamento] = useState("");
   const [entrega, setEntrega] = useState(false);
+  const [mesa, setMesa] = useState(false);
   const [endereco, setEndereco] = useState("");
   const [retirada, setRetirada] = useState(false);
   const [nota, setNota] = useState("");
@@ -90,9 +91,9 @@ function ModalCart({
       return;
     }
 
-    // Validação para opção de entrega ou retirada
-    if (!(entrega || retirada)) {
-      toast.info("Selecione a opção de entrega ou retirada.", {
+    // Validação para opção de entrega, retirada ou mesa
+    if (!(entrega || retirada || mesa)) {
+      toast.info("Selecione a opção de entrega, retirada ou pedir para mesa.", {
         position: "top-center",
         autoClose: 5000,
       });
@@ -114,6 +115,7 @@ function ModalCart({
       formaPagamento, // Preencha com a forma de pagamento escolhida
       entrega, // Preencha com a escolha de entrega
       retirada, // Preencha com a escolha de retirada
+      mesa, // Preencha com a escolha de pedir para mesa
       nota: nota || "N/A", // Preencha com a nota do pedido
       enderecoEntrega: endereco || "N/A", // Preencha com o endereço de entrega, se aplicável
     };
@@ -121,17 +123,22 @@ function ModalCart({
     try {
       // Construa a mensagem para enviar para o WhatsApp
       const mensagem = `Novo pedido!\n\nDetalhes do pedido:\n${cart
-        .map((item) =>`- ${item.quantity}x ${item.name} - R$${(item.price * item.quantity).toFixed(2)}`)
-        .join("\n")}\n\nForma de pagamento: ${formaPagamento}
-        \nTotal: ${calcularTotal().toFixed(2)}
-        \nRetirada: ${retirada ? "Sim" : "Não"}\nObservações: ${
-          nota || "N/A"
-        }
-        \nEntrega: ${
-          entrega ? "Sim" : "Não"
-        }
-        \nEndereço de entrega: ${endereco || "N/A"}`;
+        .map(
+          (item) =>
+            `- ${item.quantity} ${item.name} - R$${(
+              item.price * item.quantity
+            ).toFixed(2)}`
+        )
+        .join("\n")}\n\nTotal: R$${calcularTotal().toFixed(
+        2
+      )}\n\nForma de pagamento: ${formaPagamento}\n\n${
+        entrega ? `Entrega: sim\nEndereço de entrega: ${endereco || ""}` : ""
+      }${retirada ? `\nRetirada no lanche: Sim` : ""}${
+        mesa ? `\nPedido para comer na mesa: Sim` : ""
+      }\n\nObservações: ${nota || ""}
+  `;
 
+      console.log(mensagem);
       // Substitua 'SEU-NUMERO-DE-TELEFONE' pelo número de telefone para o qual você deseja receber a mensagem
       const numeroWhatsApp = process.env.NEXT_PUBLIC_NUMERO_WPP;
 
@@ -152,6 +159,7 @@ function ModalCart({
       setFormaPagamento("");
       setEntrega(false);
       setRetirada(false);
+      setMesa(false);
       setEndereco("");
       setNota("");
       clearCart();
@@ -165,18 +173,18 @@ function ModalCart({
   };
 
   return (
-    <Modal show={showModal} onHide={closeModal} animation={false}>
-      <Modal.Header closeButton>
+    <Modal show={showModal} onHide={closeModal} animation={true}>
+      <Modal.Header className="bg-dark text-light" closeButton>
         <Modal.Title>Carrinho</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="bg-dark text-light">
         <Container>
           <ul className="list-group">
             {cart.map((item) => (
-              <li key={item.id} className="list-group-item">
+              <li key={item.id} className="list-group-item"  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }} >
                 <div className="row align-items-center">
-                  <div className="col-md-6 text-center">
-                    <div className="d-flex justify-content-between align-items-center">
+                  <div className="col-md-4 text-center" >
+                    <div className="d-flex justify-content-between align-items-center" >
                       <span
                         style={{
                           fontFamily: "Roboto, sans-serif",
@@ -192,28 +200,30 @@ function ModalCart({
                     </div>
                   </div>
 
-                  <div className="col-md-3 quantity-controls text-center mt-1 d-flex align-items-center justify-content-center">
+                  <div className="col-md-4 quantity-controls text-center mt-1 d-flex align-items-center justify-content-center">
                     <Button
-                      variant="secondary"
+                      variant="danger"
                       onClick={() => decrementQuantity(item)}
                       className="p-1 custom-rounded-button"
                       style={{
                         width: "2rem",
+                        height: "2rem",
                         marginRight: "10px",
                         borderRadius: "50%",
                       }}
                     >
                       <FontAwesomeIcon icon={faMinus} />
                     </Button>
-                    <span className="mx-2 bg-light p-2 rounded border border-danger">
+                    <span className="mx-2 bg-light p-2 rounded border border-danger bg-dark ">
                       <strong>{item.quantity}</strong>
                     </span>
                     <Button
-                      variant="secondary"
+                      variant="success"
                       onClick={() => incrementQuantity(item)}
                       className="p-1 custom-rounded-button"
                       style={{
                         width: "2rem",
+                        height: "2rem",
                         marginLeft: "10px",
                         borderRadius: "50%",
                       }}
@@ -242,14 +252,14 @@ function ModalCart({
                 as="select"
                 value={formaPagamento}
                 onChange={(e) => setFormaPagamento(e.target.value)}
-                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
-              >
+                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }}              >
                 <option value=""></option>
                 <option value="dinheiro">Dinheiro</option>
                 <option value="cartao">Cartão Débito/Crédito</option>
                 <option value="pix">Pix</option>
               </Form.Control>
             </Form.Group>
+
             <div className="d-flex justify-content-between mt-3">
               <Form.Group controlId="entrega">
                 <Form.Check
@@ -259,6 +269,7 @@ function ModalCart({
                   onChange={() => {
                     setEntrega(!entrega);
                     setRetirada(false);
+                    setMesa(false);
                     // Se a opção de entrega estiver marcada, salve o endereço no localStorage
                     if (!entrega) {
                       const enderecoSalvo = localStorage.getItem("endereco");
@@ -273,18 +284,35 @@ function ModalCart({
               </Form.Group>
 
               <Form.Group controlId="retirada">
+                
                 <Form.Check
                   type="checkbox"
-                  label="Retirada no restaurante"
+                  label="Retirada"
                   checked={retirada}
                   onChange={() => {
                     setRetirada(!retirada);
                     setEntrega(false);
+                    setMesa(false);
+                  }}
+                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="pedirMesa">
+                <Form.Check
+                  type="checkbox"
+                  label="Pedir para mesa"
+                  checked={mesa}
+                  onChange={() => {
+                    setMesa(!mesa);
+                    setEntrega(false);
+                    setRetirada(false);
                   }}
                   style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
                 />
               </Form.Group>
             </div>
+
             {entrega && (
               <Form.Group controlId="endereco" className="mt-3">
                 <Form.Label>
@@ -294,7 +322,7 @@ function ModalCart({
                   type="text"
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
-                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+                  style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }}   
                   required
                 />
                 <div className="text-muted" style={{ fontSize: "12px" }}>
@@ -302,20 +330,22 @@ function ModalCart({
                 </div>
               </Form.Group>
             )}
+
             <Form.Group controlId="nota" className="mt-3">
               <Form.Label>Observações do pedido (opcional)</Form.Label>
               <Form.Control
+              
                 as="input"
                 rows={3}
                 value={nota}
                 onChange={(e) => setNota(e.target.value)}
-                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px" }}
+                style={{ fontFamily: "Roboto, sans-serif", fontSize: "16px", backgroundColor: "#212529", color: "#fff" }}
               />
             </Form.Group>
           </Form>
         </Container>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="bg-dark">
         <Button
           variant="primary"
           onClick={finalizarPedido}
