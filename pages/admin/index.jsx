@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
-import NavBar from "../../components/admin/NavBarAdmin.jsx";
-import AddNewItemForm from "../../components/admin/AddNewItemForm.jsx";
-import CategoryList from "../../components/admin/CategoryList.jsx";
-import SearchItem from "../../components/admin/SearchItem.jsx";
-import Footer from "../../components/footer/Footer.jsx";
+import NavBar from "../../src/components/admin/NavBarAdmin.jsx";
+import AddNewItemForm from "../../src/components/admin/AddNewItemForm.jsx";
+import CategoryList from "../../src/components/admin/CategoryList.jsx";
+import SearchItem from "../../src/components/admin/SearchItem.jsx";
+import Footer from "../../src/components/footer/Footer.jsx";
 import { Container } from "react-bootstrap";
 
 export default function AdminPanel() {
