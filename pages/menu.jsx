@@ -33,7 +33,7 @@ export default function MenuCardapio() {
     <div className="container-fluid bg-dark">
       <div className="row">
         {/* Navigation Menu */}
-        <div className="col-md-12 fixed-top">
+        <div className="col-md-12">
           <NavItem {...{ cart, cartCount, setCart, setCartCount }} />
         </div>
 

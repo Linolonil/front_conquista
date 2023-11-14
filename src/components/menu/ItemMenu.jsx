@@ -95,10 +95,10 @@ function ItemMenu({
   };
 
   const categorySettings = {
-    dots: false,
+    dots: true,
     infinite: false,
     speed: 700,
-    slidesToShow: 4.15,
+    slidesToShow: 4,
     slidesToScroll: 2,
     responsive: [
       {
@@ -115,13 +115,13 @@ function ItemMenu({
   };
 
   return (
-    <div className="row" style={{ marginTop: "6rem" }}>
-      <div>
+    <div className="container">
+      <div className="row mt-0 navbar p-4 sticky-top bg-dark">
         <Slider
           {...categorySettings}
           ref={categorySliderRef}
-          style={{ margin: "0 1rem 0 1rem" }}
-        >
+          className="p-1"
+          >
           {Object.keys(itemsByCategory).map((categoryId) => (
             <button
               key={categoryId}
@@ -132,65 +132,67 @@ function ItemMenu({
               }`}
               onClick={() => setSelectedCategory(parseInt(categoryId))}
             >
-              <strong className="fs-3">{category(parseInt(categoryId))}</strong>
+              <strong>{category(parseInt(categoryId))}</strong>
             </button>
           ))}
         </Slider>
       </div>
+
       {itemsByCategory[selectedCategory]?.length > 0 ? (
-        <div className="row mx-0 mt-3">
-          {itemsByCategory[selectedCategory].map((item) => (
-            <div key={item.id} className="col-md-4 mb-3">
-              <div
-                className={`card ${
-                  item.isVisible ? "card-available" : "card-unavailable"
-                } ${styles.bg}`}
-                style={{
-                  opacity: item.isVisible ? 1 : 0.6,
-                  border: item.isVisible ? "2px solid red" : "none",
-                }}
-              >
-                <div className="card-body mx-1">
-                  <h5 className="card-title fs-5 fw-bold text-warning">
-                    {item.name}
-                  </h5>
-                  <div style={{ color: "#979797" }}>
-                    <p
-                      className={`card-text ${
-                        item.isVisible ? "btn-available" : "btn-unavailable"
-                      }`}
-                    >
-                      {item.description}
-                    </p>
-                  </div>
-                  <div className="d-flex justify-content-between mt-4">
-                    <p
-                      className="card-text fs-5 fw-bold"
-                      style={{ color: "#fff" }}
-                    >
-                      R$ {item.price.toFixed(2)}
-                    </p>
-                    <button
-                      className={`btn btn-danger ${
-                        item.isVisible ? "btn-available" : "btn-unavailable"
-                      }`}
-                      onClick={() => addToCart(item)}
-                      disabled={!item.isVisible}
-                    >
-                      <FontAwesomeIcon icon={faPlus} />
-                    </button>
-                  </div>
-                </div>
+  <div className="row mx-0 mt-3">
+    {itemsByCategory[selectedCategory]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((item) => (
+        <div key={item.id} className="col-md-4 mb-0">
+          <div
+            className={`card ${
+              item.isVisible ? "card-available" : "card-unavailable"
+            } ${styles.bg}`}
+            style={{
+              opacity: item.isVisible ? 1 : 0.6,
+              border: item.isVisible ? "2px solid red" : "none",
+            }}
+          >
+            <div className="card-body mx-1">
+              <h5 className="card-title fs-5 fw-bold text-warning">
+                {item.name}
+              </h5>
+              <div style={{ color: "#979797" }}>
+                <p
+                  className={`card-text ${
+                    item.isVisible ? "btn-available" : "btn-unavailable"
+                  }`}
+                >
+                  {item.description}
+                </p>
               </div>
-              <hr />
+              <div className="d-flex justify-content-between mt-4">
+                <p className="card-text fs-5 fw-bold" style={{ color: "#fff" }}>
+                  R$ {item.price.toFixed(2)}
+                </p>
+                <button
+                  className={`btn btn-danger ${
+                    item.isVisible ? "btn-available" : "btn-unavailable"
+                  }`}
+                  onClick={() => addToCart(item)}
+                  disabled={!item.isVisible}
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                </button>
+              </div>
             </div>
-          ))}
+          </div>
+          <hr />
         </div>
-      ) : (
-        <div className="text-center mt-3">
-          <p>Itens Indisponíveis no Momento</p>
-        </div>
-      )}
+      ))}
+  </div>
+) : (
+  <div className="text-center mt-3">
+    <p>Itens Indisponíveis no Momento</p>
+  </div>
+)}
+
+
       <ToastContainer />
     </div>
   );

@@ -16,7 +16,7 @@ export default function NavMenu({ cartCount, cart, setCart, setCartCount }) {
 
   return (
     <div className="row">
-    <nav className={`text-center bg-dark ${styles.navbar}`} style={{ boxShadow: '0px 5px 5px -5px rgba(0, 0, 0, 0.75)' }}>
+    <nav className={`text-center bg-dark ${styles.navbar}`} >
       <div className="text-center">
         <Image
           src="/logo-min.png"
