@@ -73,6 +73,7 @@ function ModalCart({
     setCartCount(0);
   };
 
+  const postVenda = process.env.NEXT_PUBLIC_POST_VENDA;
   const finalizarPedido = async () => {
     // Validação específica para quantidade de itens no carrinho
     if (cartCount === 0) {
@@ -170,10 +171,7 @@ function ModalCart({
       if (entrega) {
         localStorage.setItem("endereco", endereco);
       }
-      const response = await axios.post(
-        "http://localhost:3001/venda/criar-venda",
-        pedidoSalvo
-      );
+      const response = await axios.post(postVenda, pedidoSalvo);
 
       console.log(response);
 

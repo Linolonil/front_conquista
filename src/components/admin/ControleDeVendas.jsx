@@ -6,7 +6,7 @@ export default function ControleDeVendas() {
   const [orders, setOrders] = useState([]);
   const [openCollapses, setOpenCollapses] = useState([]);
 
-  const getVendas = "http://localhost:3001/venda/consultar-venda/";
+  const getVendas =  process.env.NEXT_PUBLIC_GET_VENDAS;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
