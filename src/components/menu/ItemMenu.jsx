@@ -20,8 +20,8 @@ const formatTime = (seconds) => {
 function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
   const [selectedCategory, setSelectedCategory] = useState(1);
   const [timeLeft, setTimeLeft] = useState(60); // Tempo inicial em segundos
+  const [isMenuAvailable, setIsMenuAvailable] = useState(false);
   const [progress, setProgress] = useState(100);
-
   const categorySliderRef = useRef(null);
 
   useEffect(() => {
@@ -43,6 +43,29 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
     }
   }, [menuData]);
 
+  useEffect(() => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const currentHour = now.getHours();
+
+    // Almoço de 10:30 até 14:30 e Jantar de 18:30 até 22:30 (segunda a sábado)
+    const isLunchTime = currentHour >= 10 && currentHour < 15;
+    const isDinnerTime = currentHour >= 18 && currentHour < 23;
+
+    // Jantar de 18:30 até 22:30 no domingo
+    const isSundayDinner =
+      dayOfWeek === 0 && currentHour >= 18 && currentHour < 23;
+
+    const isMenuAvailable =
+      dayOfWeek >= 0 &&
+      dayOfWeek <= 6 &&
+      (isLunchTime || isDinnerTime || isSundayDinner);
+    setIsMenuAvailable(isMenuAvailable);
+
+    console.log(isMenuAvailable);
+  }, []);
+
+  //Loading que todo mundo gosta kkkk
   if (!menuData || !menuData.menu || !Array.isArray(menuData.menu)) {
     return (
       <div className={styles.centerImage}>
@@ -70,6 +93,20 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
 
   const addToCart = (item) => {
     try {
+      if (!isMenuAvailable) {
+        // Se não estiver em horário de expediente, exibe um toast informando o usuário
+        toast.warning("Não estamos em horário de expediente no momento.", {
+          autoClose: 3000,
+          position: "top-left",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          theme: "dark",
+          draggable: true,
+        });
+        return;
+      }
+
       const cartItem = {
         id: item.id,
         name: item.name,

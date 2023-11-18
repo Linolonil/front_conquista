@@ -193,7 +193,12 @@ function ModalCart({
   };
 
   return (
-    <Modal show={showModal} onHide={closeModal} animation={true}>
+    <Modal
+      show={showModal}
+      onHide={closeModal}
+      animation={true}
+      centered
+    >
       <Modal.Header className="bg-dark text-light" closeButton>
         <Modal.Title>Carrinho de pedidos </Modal.Title>
       </Modal.Header>
