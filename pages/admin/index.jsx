@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
 import NavBar from "../../src/components/admin/NavBarAdmin.jsx";
 import AddNewItemForm from "../../src/components/admin/AddNewItemForm.jsx";
 import CategoryList from "../../src/components/admin/CategoryList.jsx";
+import ControleDeVendas from "../../src/components/admin/ControleDeVendas.jsx";
 import SearchItem from "../../src/components/admin/SearchItem.jsx";
 import Footer from "../../src/components/footer/Footer.jsx";
 import { Container } from "react-bootstrap";
@@ -17,7 +18,7 @@ export default function AdminPanel() {
   // rotas API
   const getItem = process.env.NEXT_PUBLIC_GET_ITEM_ADMIN;
   const getRota = process.env.NEXT_PUBLIC_GET_ROTA_PROTEGIDA;
-
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -56,6 +57,8 @@ export default function AdminPanel() {
         setMenuItems(response.data);
       });
   }, []);
+
+ 
 
   return (
     <Container>
@@ -104,6 +107,9 @@ export default function AdminPanel() {
           list={4}
         />
       </div>
+
+     <ControleDeVendas/>
+
       <hr className="my-5" />
 
       <Footer />

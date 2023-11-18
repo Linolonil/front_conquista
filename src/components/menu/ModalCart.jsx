@@ -3,6 +3,7 @@ import { useState } from "react";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 
 function ModalCart({
@@ -138,7 +139,22 @@ function ModalCart({
       }\n\nObservações: ${nota || ""}
   `;
 
-      console.log(mensagem);
+      const pedidoSalvo = {
+        items: `${cart.map(
+          (item) =>
+            `- ${item.quantity} ${item.name} - R$${(
+              item.price * item.quantity
+            ).toFixed(2)}`
+        )}`,
+        total: calcularTotal(),
+        paymentMethod: formaPagamento,
+        delivery: entrega,
+        address: endereco,
+        trip: retirada,
+        table: mesa,
+        note: nota,
+      };
+
       // Substitua 'SEU-NUMERO-DE-TELEFONE' pelo número de telefone para o qual você deseja receber a mensagem
       const numeroWhatsApp = process.env.NEXT_PUBLIC_NUMERO_WPP;
 
@@ -154,6 +170,12 @@ function ModalCart({
       if (entrega) {
         localStorage.setItem("endereco", endereco);
       }
+      const response = await axios.post(
+        "http://localhost:3001/venda/criar-venda",
+        pedidoSalvo
+      );
+
+      console.log(response);
 
       // Limpe os campos e o carrinho após o pedido ser finalizado
       setFormaPagamento("");
