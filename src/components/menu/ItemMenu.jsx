@@ -96,12 +96,12 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
   }
 
   const itemsByCategory =
-  menuData && menuData.menu
-    ? menuData.menu.reduce((acc, item) => {
-        acc[item.categoryId] = [...(acc[item.categoryId] || []), item];
-        return acc;
-      }, {})
-    : {};
+    menuData && menuData.menu
+      ? menuData.menu.reduce((acc, item) => {
+          acc[item.categoryId] = [...(acc[item.categoryId] || []), item];
+          return acc;
+        }, {})
+      : {};
 
   const addToCart = (item) => {
     try {
@@ -173,7 +173,6 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
 
   const handleJuiceChoice = (choice) => {
     try {
-
       const updatedJuiceItem = { ...selectedJuiceItem };
 
       if (choice === "com-leite") {
@@ -292,7 +291,7 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
         breakpoint: 736,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1,
+          slidesToScroll: 2,
         },
       },
       {
