@@ -30,8 +30,6 @@ export default function NavMenu({ cartCount, cart, setCart, setCartCount }) {
       dayOfWeek <= 6 &&
       (isLunchTime || isDinnerTime || isSundayDinner);
     setIsMenuAvailable(isMenuAvailable);
-
-    console.log(isMenuAvailable);
   }, []);
 
   const openModal = () => {
@@ -47,6 +45,7 @@ export default function NavMenu({ cartCount, cart, setCart, setCartCount }) {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
+        theme: "dark",
       });
     }
   };

@@ -38,20 +38,36 @@ function ModalCart({
   };
 
   const incrementQuantity = (item) => {
+    // Verifica se o item possui a marca "(com leite)" no nome
+    const isComLeite = item.name.includes("(com leite)");
+
     const updatedCart = cart.map((cartItem) => {
-      if (cartItem.id === item.id) {
+      // Verifica se o item no carrinho tem o mesmo ID e se possui a mesma marca "(com leite)"
+      if (
+        cartItem.id === item.id &&
+        cartItem.name.includes("(com leite)") === isComLeite
+      ) {
         cartItem.quantity++;
       }
       return cartItem;
     });
 
+    // Atualiza o carrinho
     setCart(updatedCart);
+    // Ajusta a contagem do carrinho
     setCartCount(cartCount + 1);
   };
 
   const decrementQuantity = (item) => {
+    // Verifica se o item possui a marca "(com leite)" no nome
+    const isComLeite = item.name.includes("(com leite)");
+
     const updatedCart = cart.map((cartItem) => {
-      if (cartItem.id === item.id) {
+      // Verifica se o item no carrinho tem o mesmo ID e se possui a mesma marca "(com leite)"
+      if (
+        cartItem.id === item.id &&
+        cartItem.name.includes("(com leite)") === isComLeite
+      ) {
         if (cartItem.quantity > 1) {
           cartItem.quantity--;
         } else {
@@ -64,7 +80,10 @@ function ModalCart({
 
     const filteredCart = updatedCart.filter((item) => item !== null);
 
+    // Ajusta a contagem do carrinho
     setCartCount(cartCount - 1);
+
+    // Atualiza o carrinho
     setCart(filteredCart);
   };
 
@@ -193,12 +212,7 @@ function ModalCart({
   };
 
   return (
-    <Modal
-      show={showModal}
-      onHide={closeModal}
-      animation={true}
-      centered
-    >
+    <Modal show={showModal} onHide={closeModal} animation={true} centered>
       <Modal.Header className="bg-dark text-light" closeButton>
         <Modal.Title>Carrinho de pedidos </Modal.Title>
       </Modal.Header>

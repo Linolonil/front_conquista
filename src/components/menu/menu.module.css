@@ -17,12 +17,13 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
+
 .centerImage {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  height: 78vh; /* Adjust this value based on your layout */
+  height: 85vh; /* Adjust this value based on your layout */
 }
 
 .logo {

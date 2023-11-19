@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./menu.module.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Modal } from "react-bootstrap";
 import Image from "next/image";
 
 const formatTime = (seconds) => {
@@ -19,16 +20,25 @@ const formatTime = (seconds) => {
 
 function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
   const [selectedCategory, setSelectedCategory] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(60); // Tempo inicial em segundos
+  const [timeLeft, setTimeLeft] = useState(60);
   const [isMenuAvailable, setIsMenuAvailable] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [selectedJuiceItem, setSelectedJuiceItem] = useState(null);
+  const [showJuiceModal, setShowJuiceModal] = useState(false);
   const categorySliderRef = useRef(null);
+
+  const openJuiceModal = () => {
+    setShowJuiceModal(true);
+  };
+  const closeJuiceModal = () => {
+    setShowJuiceModal(false);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (timeLeft > 0) {
         setTimeLeft((prevTime) => prevTime - 1);
-        setProgress((prevProgress) => prevProgress - 100 / 60); // ajuste para o tempo desejado
+        setProgress((prevProgress) => prevProgress - 100 / 60);
       } else {
         clearInterval(interval);
       }
@@ -48,11 +58,9 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
     const dayOfWeek = now.getDay();
     const currentHour = now.getHours();
 
-    // Almoço de 10:30 até 14:30 e Jantar de 18:30 até 22:30 (segunda a sábado)
     const isLunchTime = currentHour >= 10 && currentHour < 15;
     const isDinnerTime = currentHour >= 18 && currentHour < 23;
 
-    // Jantar de 18:30 até 22:30 no domingo
     const isSundayDinner =
       dayOfWeek === 0 && currentHour >= 18 && currentHour < 23;
 
@@ -61,11 +69,8 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
       dayOfWeek <= 6 &&
       (isLunchTime || isDinnerTime || isSundayDinner);
     setIsMenuAvailable(isMenuAvailable);
-
-    console.log(isMenuAvailable);
   }, []);
 
-  //Loading que todo mundo gosta kkkk
   if (!menuData || !menuData.menu || !Array.isArray(menuData.menu)) {
     return (
       <div className={styles.centerImage}>
@@ -86,15 +91,17 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
     );
   }
 
-  const itemsByCategory = menuData.menu.reduce((acc, item) => {
-    acc[item.categoryId] = [...(acc[item.categoryId] || []), item];
-    return acc;
-  }, {});
+  const itemsByCategory =
+  menuData && menuData.menu
+    ? menuData.menu.reduce((acc, item) => {
+        acc[item.categoryId] = [...(acc[item.categoryId] || []), item];
+        return acc;
+      }, {})
+    : {};
 
   const addToCart = (item) => {
     try {
       if (!isMenuAvailable) {
-        // Se não estiver em horário de expediente, exibe um toast informando o usuário
         toast.warning("Não estamos em horário de expediente no momento.", {
           autoClose: 3000,
           position: "top-left",
@@ -104,6 +111,18 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
           theme: "dark",
           draggable: true,
         });
+        return;
+      }
+
+      // Adicionar lógica específica para o suco
+      if (
+        item.categoryId === 3 &&
+        item.description.toLowerCase().includes("suco")
+      ) {
+        console.log("Suco selecionado:", item);
+        console.log("Mostrando modal");
+        setSelectedJuiceItem(item);
+        setShowJuiceModal(true);
         return;
       }
 
@@ -148,6 +167,101 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
     }
   };
 
+  const handleJuiceChoice = (choice) => {
+    try {
+
+      const updatedJuiceItem = { ...selectedJuiceItem };
+
+      if (choice === "com-leite") {
+        updatedJuiceItem.price = parseFloat(updatedJuiceItem.price) + 2;
+        const comLeiteName = `${updatedJuiceItem.name} (com leite)`;
+
+        // Adiciona um identificador único para distinguir cada item com leite
+        const itemId = `${updatedJuiceItem.id}_${choice}`;
+
+        // Verifica se o item com leite já está no carrinho
+        const itemComLeiteNoCarrinho = cart.find((item) => item.id === itemId);
+
+        if (itemComLeiteNoCarrinho) {
+          // Se já está no carrinho, incrementa a quantidade
+          const updatedCart = cart.map((cartItem) => {
+            if (cartItem.id === itemId) {
+              cartItem.quantity++;
+            }
+            return cartItem;
+          });
+
+          setCart(updatedCart);
+          setCartCount(cartCount + 1);
+        } else {
+          // Se não está no carrinho, adiciona um novo item com a marca "(com leite)"
+          setCart([
+            ...cart,
+            {
+              id: itemId,
+              name: comLeiteName,
+              price: updatedJuiceItem.price,
+              quantity: 1,
+              description: `${updatedJuiceItem.description} (com leite)`,
+            },
+          ]);
+          setCartCount(cartCount + 1);
+        }
+      } else {
+        // Adiciona o item diretamente ao carrinho se não for "com leite"
+        const itemSemLeiteNoCarrinho = cart.find(
+          (item) =>
+            item.id === updatedJuiceItem.id && !item.name.includes("com leite")
+        );
+
+        if (itemSemLeiteNoCarrinho) {
+          // Se já está no carrinho, incrementa a quantidade
+          const updatedCart = cart.map((cartItem) => {
+            if (
+              cartItem.id === updatedJuiceItem.id &&
+              !cartItem.name.includes("com leite")
+            ) {
+              cartItem.quantity++;
+            }
+            return cartItem;
+          });
+
+          setCart(updatedCart);
+          setCartCount(cartCount + 1);
+        } else {
+          // Se não está no carrinho, adiciona um novo item
+          setCart([
+            ...cart,
+            {
+              id: updatedJuiceItem.id,
+              name: updatedJuiceItem.name,
+              price: updatedJuiceItem.price,
+              quantity: 1,
+              description: updatedJuiceItem.description,
+            },
+          ]);
+          setCartCount(cartCount + 1);
+        }
+      }
+
+      toast.success(`${updatedJuiceItem.name} adicionado no carrinho`, {
+        autoClose: 1500,
+        position: "top-left",
+        icon: "🛒",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        draggable: true,
+      });
+
+      setSelectedJuiceItem(null);
+      setShowJuiceModal(false);
+    } catch (error) {
+      console.error("Error handling juice choice:", error);
+    }
+  };
+
   const category = (id) => {
     switch (id) {
       case 1:
@@ -157,7 +271,7 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
       case 3:
         return "🥤 Bebidas";
       case 4:
-        return "🍔🍟🥤 Combos";
+        return "🍟 Combos";
       default:
         return "Categoria Desconhecida";
     }
@@ -166,12 +280,19 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
   const categorySettings = {
     dots: true,
     infinite: false,
-    speed: 700,
+    speed: 800,
     slidesToShow: 4,
     slidesToScroll: 2,
     responsive: [
       {
-        breakpoint: 768,
+        breakpoint: 736,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 389,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -206,7 +327,15 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
       {itemsByCategory[selectedCategory]?.length > 0 ? (
         <div className="row mx-0 mt-3">
           {itemsByCategory[selectedCategory]
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort((a, b) => {
+              if (a.isVisible && !b.isVisible) {
+                return -1;
+              } else if (!a.isVisible && b.isVisible) {
+                return 1;
+              } else {
+                return a.name.localeCompare(b.name);
+              }
+            })
             .map((item) => (
               <div key={item.id} className="col-md-4 mb-0">
                 <div
@@ -256,6 +385,38 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
           <p>Itens Indisponíveis no Momento</p>
         </div>
       )}
+
+      {showJuiceModal &&
+        selectedJuiceItem &&
+        (console.log("Renderizando modal"),
+        (
+          <Modal
+            show={openJuiceModal}
+            onHide={closeJuiceModal}
+            animation={true}
+          >
+            <div className="modal-content text-center bg-dark text-light">
+              <p className="mt-3 mb-4">
+                O "{selectedJuiceItem.name}" pode ser pedido com leite por um
+                acréscimo de R$2. Gostaria de adicionar leite? 😄
+              </p>
+              <div className="mb-3 ">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => handleJuiceChoice("com-leite")}
+                >
+                  Com Leite
+                </button>
+                <button
+                  className="btn btn-secondary ms-5"
+                  onClick={() => handleJuiceChoice("sem-leite")}
+                >
+                  Sem Leite
+                </button>
+              </div>
+            </div>
+          </Modal>
+        ))}
 
       <ToastContainer />
     </div>
