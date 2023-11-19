@@ -58,9 +58,13 @@ function ItemMenu({ menuData, setCart, setCartCount, cart, cartCount }) {
     const dayOfWeek = now.getDay();
     const currentHour = now.getHours();
 
-    const isLunchTime = currentHour >= 10 && currentHour < 15;
+    // Almoço de 10:30 até 14:30 de segunda a sábado
+    const isLunchTime =
+      currentHour >= 10 && currentHour < 15 && dayOfWeek !== 0;
+    // Jantar de 18:30 até 22:30 de segunda a domingo
     const isDinnerTime = currentHour >= 18 && currentHour < 23;
 
+    // Jantar de 18:30 até 22:30 no domingo
     const isSundayDinner =
       dayOfWeek === 0 && currentHour >= 18 && currentHour < 23;
 
